@@ -8,9 +8,9 @@
         <ul>
           <li><router-link to="/mypage">마이페이지</router-link></li>
           <li><router-link to="/board">자유게시판</router-link></li>
-          <li><router-link to="/board">홍보</router-link></li>
-          <li><router-link to="/review">리뷰</router-link></li>
-          <li><router-link to="/signup">회원가입</router-link></li>
+          <li><router-link to="/pr">홍보</router-link></li>
+          <li><router-link to="/">지역</router-link></li>
+          <li v-if="!isAuth"><router-link to="/signup">회원가입</router-link></li>
           <li>
             <a href="" v-if="isAuth" @click.prevent="logout">Logout</a>
             <router-link v-else to="/login">Login</router-link>
@@ -23,27 +23,22 @@
 </template>
 
 <script>
-//import {setAuthInHeader} from '../api'
-
 export default {
-  computed: {  //로그인 여부 확인
-    isAuth() { 
-      return !!localStorage.getItem('token')
-    }
+  computed: {
+    isAuth() {
+      return this.$store.state.isAuth;
+    },
   },
   methods: {
     logout() {
       localStorage.removeItem("token");
-        this.$router.push('/');
-        location.reload();
-    }
-    //   delete localStorage.token
-    //   setAuthInHeader(null) //api보내는 header값 null로
-    //   this.$router.push('/login') //로그인 페이지로 리다이렉트
-    // }
-  }
-}
+      this.$store.commit('setIsAuth', false);
+      this.$router.push('/');
+    },
+  },
+};
 </script>
+
 
 <style scoped>
 header {

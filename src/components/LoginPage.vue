@@ -39,6 +39,7 @@ export default {
         setToken(response.data.token);
         this.error = '로그인불가';
         this.$router.push('/');
+        this.$store.commit('setIsAuth', true);
       } catch (e) {
         this.error = '아이디 혹은 비밀번호가 틀렸습니다.';
       }

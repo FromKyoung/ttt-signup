@@ -68,7 +68,6 @@
                 <div class="button-row">
                     <div class="button"><router-link to="/region/gwangju"><div class="button">광주</div></router-link></div>
                     <div class="button"><router-link to="/region/jejudo"><div class="button">제주</div></router-link></div>
-                    <div class="button"><router-link to=""><div class="button">관심지역</div></router-link></div>
                 </div>
             </div>
         </div>

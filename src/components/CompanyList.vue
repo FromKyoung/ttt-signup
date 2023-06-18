@@ -7,19 +7,28 @@
         </div>
         <div class="card-group">
           <div class="card" v-for="company in companyList" v-bind:key="company.id">
-            <h3>{{ company.name }}</h3>
+            <h3>{{ company.name }} 
+              <span v-if="company.branchName && company.branchName !== 'None'"> {{ company.branchName }}</span>
+            </h3>
             <div class="adress">
               <p>지번 주소: {{ company.localAddress }}</p>
               <p>도로명 주소: {{ company.roadAddress }}</p>
-              <p>우편번호: {{ company.newPostalCode }}</p>
+              <p>전화번호: {{ company.formattedPhoneNumber ? company.formattedPhoneNumber : '업체에서 지원하지 않습니다.' }}</p>
+              <p>평점: {{ company.rating ? company.rating : '업체에서 지원하지 않습니다' }}</p>
             </div>
-            <a href="#">지도 보기</a>
+            <div>
+            <router-link :to="getMapLink(company)">지도 보기</router-link>
+            </div>
+            <div v-if="company.formattedPhoneNumber || company.rating">
+            <router-link :to="getDetail(company)">상세 보기</router-link>
+            </div>
           </div>
         </div>
 
         <div id="page-btns">
           <button class="page-btn" @click="prevPage" v-if="currentPage > 0">이전 페이지</button>
-          <button class="page-btn" v-for="pageNumber in pageNumbers" v-bind:key="pageNumber.id" @click="goToPage(pageNumber - 1)" :class="{ 'active': currentPage === pageNumber - 1 }">{{ pageNumber }}</button>
+          <button class="page-btn" v-for="pageNumber in pageNumbers" v-bind:key="pageNumber.id"
+           @click="goToPage(pageNumber - 1)" :class="{ 'active': currentPage === pageNumber - 1 }">{{ pageNumber }}</button>
           <button class="page-btn" @click="nextPage" v-if="hasNextPage">다음 페이지</button>
         </div>
 
@@ -49,6 +58,40 @@ export default {
     this.fetchCompanyData();
   },
   methods: {
+    getMapLink(company) {        
+      return {
+        name: 'MapPage',
+        path: '/MapPage',
+        query: {
+          latitude: company.latitude,
+          longitude: company.longitude,
+          name: company.name,
+          branchName: company.branchName,
+          localAddress: company.localAddress,
+          roadAddress: company.roadAddress
+          // largeName: company.largeName,
+          // reviews: reviewsString,
+        },
+      };
+      // return `/map?latitude=${company.latitude}&longitude=${company.longitude}`;
+    },
+    getDetail(company) {
+      const reviewsString = JSON.stringify(company.reviews);    
+      const openingHoursString = JSON.stringify(company.openingHours);    
+
+      return {
+        name: 'DetailPage',
+        path: '/DetailPage',
+        query: {
+          name: company.name,
+          branchName: company.branchName,
+          openingHours : openingHoursString,
+          reviews: reviewsString,
+        },
+      };
+      // return `/map?latitude=${company.latitude}&longitude=${company.longitude}`;
+    },
+
     fetchCompanyData() {
         const { smallCode, district, region } = this.$route.query;
  

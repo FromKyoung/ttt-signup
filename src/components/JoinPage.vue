@@ -199,17 +199,27 @@ async submitForm(event) {
     this.checkName() &&
     this.checkPhoneNum()
   ) {
+    try {// formData 생성 및 API 호출 처리
+
       const response = await join({
         email: this.email,
-        password: this.password,
-        name: this.name,
-        phoneNumber: this.phoneNumber,
-      });
-      console.log(response.data);
-      alert("회원가입에 성공했습니다.");
-      setToken(response.data.token);
-      this.$router.push('/');  
-         }
+            password: this.password,
+            name: this.name,
+            phoneNumber: this.phoneNumber,
+          });
+          console.log(response.data);
+          alert("회원가입에 성공했습니다.");
+          setToken(response.data.token);
+          this.$router.push('/'); 
+          this.$store.commit('setIsAuth', true);
+        } catch (error) {
+          if (error.response && error.response.status === 400) {
+            alert('이미 가입된 이메일입니다.');
+          } else {
+            console.error(error);
+          }
+          }
+          }
     },
     async ceoSubmitForm(event) {
       event.preventDefault();
@@ -231,14 +241,12 @@ async submitForm(event) {
           alert("회원가입에 성공했습니다.");
           setToken(response.data.token);
           this.$router.push('/'); 
+          this.$store.commit('setIsAuth', true);
         } catch (error) {
-          console.error(error);
-          if (error.response && error.response.data) {
-            // 서버에서 에러 메시지를 반환한 경우, 그 메시지를 사용자에게 표시합니다.
-            alert(`회원가입 실패: ${error.response.data.message}`);
+          if (error.response && error.response.status === 400) {
+            alert('이미 가입된 이메일입니다.');
           } else {
-            // 그 외의 경우, 일반적인 에러 메시지를 표시합니다.
-            alert('회원가입 중에 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+            console.error(error);
           }
           }
           }
